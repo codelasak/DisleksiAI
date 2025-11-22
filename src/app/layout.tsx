@@ -42,6 +42,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr">
+      <head>
+        <link 
+          rel="stylesheet" 
+          href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" 
+        />
+        <link 
+          rel="stylesheet" 
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" 
+        />
+      </head>
       <body className="antialiased min-h-screen">
         <div className="flex flex-col min-h-screen">
           <main className="flex-1">

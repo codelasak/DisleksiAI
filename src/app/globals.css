@@ -18,18 +18,25 @@
   }
 
   body {
-    @apply bg-dys-bg text-dys-text;
+    @apply bg-bg-light text-text-main font-sans;
     font-feature-settings: "kern" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Ensure background color is exact */
+    background-color: #f6f6f8;
   }
 
   /* Dyslexia-friendly typography */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans text-dys-heading;
+    @apply font-sans text-text-main;
     letter-spacing: 0.12em;
     line-height: 1.5;
+  }
+
+  /* Material Symbols Configuration */
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
   }
 
   p {
