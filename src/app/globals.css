@@ -13,10 +13,6 @@
     --color-dys-error: #EF4444;
   }
 
-  * {
-    @apply border-border;
-  }
-
   html {
     @apply scroll-smooth;
   }
