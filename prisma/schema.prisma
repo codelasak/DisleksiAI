@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Student model - represents a student using the app
+model Student {
+  id              String    @id @default(uuid())
+  firebaseUid     String    @unique // Firebase Auth UID
+  name            String
+  email           String?   @unique
+  age             Int
+  grade           Int?
+  schoolId        String?
+  
+  // Dyslexia profile - JSON structure from ML diagnosis
+  // Structure: {type, difficulty_score, strengths, challenges, strategies}
+  dyslexiaProfile Json?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  exercises       ExerciseResponse[]
+  weeklyReports   WeeklyReport[]
+  achievements    Achievement[]
+  
+  @@index([firebaseUid])
+  @@index([email])
+}
+
+// Exercise responses - student answers to exercises
+model ExerciseResponse {
+  id              String    @id @default(uuid())
+  studentId       String
+  student         Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  exerciseId      String    // UUID of the exercise
+  exerciseType    String    // 'word_recognition', 'text_comprehension', etc.
+  questionText    String
+  userAnswer      String
+  correctAnswer   String
+  isCorrect       Boolean
+  responseTimeMs  Int       // Time taken to answer in milliseconds
+  difficultyLevel Int       // 1-10 scale
+  hintsUsed       Int       @default(0)
+  
+  timestamp       DateTime  @default(now())
+  
+  @@index([studentId])
+  @@index([timestamp])
+}
+
+// Weekly reports - aggregated performance data
+model WeeklyReport {
+  id          String   @id @default(uuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  weekStart   DateTime
+  weekEnd     DateTime
+  
+  // Metrics JSON structure:
+  // {sessions, totalTime, successRate, skillsProgress, newWordsLearned}
+  metrics     Json
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([studentId])
+  @@index([weekStart])
+}
+
+// Achievements - gamification badges
+model Achievement {
+  id          String   @id @default(uuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  badgeType   String   // 'first_10_words', 'week_streak_5', etc.
+  badgeName   String   // Display name
+  badgeIcon   String?  // Emoji or icon identifier
+  
+  earnedAt    DateTime @default(now())
+  
+  @@index([studentId])
+  @@index([badgeType])
+}
+
+// LLM Prompt cache - cache Gemini responses to save API costs
+model LLMPromptCache {
+  id          String   @id @default(uuid())
+  promptHash  String   @unique // MD5 hash of the prompt
+  
+  // Response JSON - the full LLM response
+  response    Json
+  
+  model       String   // 'gemini-2.0-flash-exp', etc.
+  
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime // Cache expiration
+  
+  @@index([promptHash])
+  @@index([expiresAt])
+}
+
+// Diagnosis test results - initial assessment data
+model DiagnosisResult {
+  id              String   @id @default(uuid())
+  studentId       String
+  
+  testType        String   // 'letter', 'word', 'text'
+  responses       Json     // Array of question/answer pairs
+  scorePercentage Float
+  completedAt     DateTime @default(now())
+  
+  @@index([studentId])
+}
