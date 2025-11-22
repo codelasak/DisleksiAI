@@ -1,0 +1,7 @@
+{
+  "name": "DisleksiAI",
+  "description": "Yapay zeka destekli kişisel okuma ve öğrenme asistanı.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
